@@ -2,6 +2,8 @@ from .data.faiss_db import FaissDB
 from .data.genshin_data import GenshinData
 from .model.generator import AnswerGenerator
 from .model.cache_manager import CacheManager
+from google.api_core import retry
+from google.api_core import exceptions
 
 characters_data = "src/data/json/characters_data.json"
 lore_data = "src/data/json/lore_data.json"
@@ -17,6 +19,7 @@ class AkashaQA:
         all_chunks = self.genshin_data.get_all_chunks()
         self.faiss_db.add_documents(all_chunks)
 
+    @retry.Retry(predicate=retry.if_exception_type(exceptions.ResourceExhausted))
     def get_answer(self, question):
         cached_answer = self.cache.get(question)
         if cached_answer:

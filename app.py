@@ -5,6 +5,7 @@ from aiogram.filters import CommandStart
 import os
 from dotenv import load_dotenv
 from src.AkashaQA import AkashaQA
+import re
 
 load_dotenv()
 API_KEY_BOT = os.getenv("API_KEY_TG")
@@ -36,6 +37,8 @@ async def answer_question(message: types.Message):
 
     question = message.text
     answer = akasha.get_answer(question)
+
+    print(answer)
 
     await bot.edit_message_text(
         answer,
